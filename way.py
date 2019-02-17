@@ -9,7 +9,7 @@ class Way(object):
         self.id = way_id
         self.nodes = nodes[:]
         self.tags = tags
-        self.str_id = get_str_id(nodes, tags)
+        self.str_id = get_str_id(nodes)
         self.referrers = []
    
     def add_referrer(self, referrer):
@@ -57,12 +57,14 @@ class Way(object):
 
     def reverse(self):
         self.nodes.reverse()
-        self.str_id = get_str_id(self.nodes, self.tags)
+        self.str_id = get_str_id(self.nodes)
 
     def find_commom_path(self, other_way, starting_index_other_way, minimum_common_way_node_number, reverse = False):
         result = []
         nodes = self.nodes
         if reverse:
+            # Be aware that now the indices returns by this function
+            # are pointing into the the reversed node list
             nodes = nodes[:]
             nodes.reverse()
         other_nodes = other_way.nodes
@@ -114,8 +116,8 @@ class Way(object):
 def get_new_id():
     return global_id.get_new_id()
 
-def get_str_id(nodes, tags):
-    return '_'.join([ str(x.id) for x in nodes ]) + '_' + json.dumps(tags)
+def get_str_id(nodes):
+    return '_'.join([ str(x.id) for x in nodes ])
 
 def remove_duplicates(nodes):
     # Remove sequential similar nodes
@@ -134,12 +136,14 @@ class WayCache(object):
         if way.str_id in self._cache:
             del self._cache[way.str_id]
 
-    def add_from_node_list(self, node_list, tags):
+    def add_from_node_list(self, node_list, tags, merge_tags_func = None):
         nodes = node_list[:]
         remove_duplicates(nodes)
-        str_id = get_str_id(nodes, tags)
+        str_id = get_str_id(nodes)
         if str_id in self._cache:
             way = self._cache[str_id]
+            if (merge_tags_func):
+                way.tags = merge_tags_func(way.tags, tags)
         else:
             way = Way(nodes, get_new_id(), tags)
             self._cache[str_id] = way
@@ -147,7 +151,7 @@ class WayCache(object):
                 node.add_referrer(way)
         return way
 
-    def add_from_ogr(self, ogr_line, tags, node_tags = {}):
+    def add_from_ogr(self, ogr_line, tags, node_tags = {}, merge_tags_func = None):
         nodes = []
         node_cache = self.node_cache
         for i in range(ogr_line.GetPointCount()):
@@ -157,9 +161,11 @@ class WayCache(object):
             nodes.append(nd)
         remove_duplicates(nodes)
 
-        str_id = get_str_id(nodes, tags)
+        str_id = get_str_id(nodes)
         if str_id in self._cache:
             way = self._cache[str_id]
+            if (merge_tags_func):
+                way.tags = merge_tags_func(way.tags, tags)
         else:
             way = Way(nodes, get_new_id(), tags)
             self._cache[str_id] = way

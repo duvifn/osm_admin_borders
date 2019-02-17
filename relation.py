@@ -60,8 +60,8 @@ class Relation(object):
                     new_way.add_referrer(self)
                 
                 # I can't imagine a case where a way is referrenced more than 
-                # once by a relation, so break here
-                break
+                # once by the same relation, but just in case...
+                # break
         
         # recalculate str_id, since it depends on the members
         self.str_id = get_str_id(members, self.tags)
@@ -79,7 +79,7 @@ def get_str_id(members, tags):
 def polygon_to_members(ogrgeometry, way_cache, way_tags = {}, node_tags = {}):
     members = []
     if ogrgeometry.GetGeometryCount() == 0:
-        raise Exception("Polygon without any ring!")
+        raise RuntimeError("Polygon without any ring!")
     elif ogrgeometry.GetGeometryCount() == 1:
         way = way_cache.add_from_ogr(ogrgeometry.GetGeometryRef(0), way_tags, node_tags)
         member = {

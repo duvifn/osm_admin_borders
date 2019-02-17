@@ -1,18 +1,19 @@
 class TagMapper(object):
-    def get_node_tags(self, feature, layer):
+    def __init__(self, layer, translation_module = None):
+        self.field_names = get_field_names(layer)
+        self.translation_module = translation_module
+    def get_node_tags(self, feature, layer, predefined_tags = {}):
         return {}
-    def get_way_tags(self, feature, layer):
-        return {}
-    def get_relation_tags(self, feature, layer ):
-        layer_definition = layer.GetLayerDefn()
-        result = {}
-        for i in range(layer_definition.GetFieldCount()):
-            field_name =  layer_definition.GetFieldDefn(i).GetName()
-            field_value = feature.GetField(field_name)
-            if field_value is not None:
-                result[field_name] = feature.GetField(field_name)
-        return result
-    
+    def get_way_tags(self, feature, layer, predefined_tags = {}):
+        field_dict = get_field_values (feature, self.field_names)
+        if self.translation_module:
+            return self.translation_module.get_tags(field_dict, 'way')
+        return field_dict
+    def get_relation_tags(self, feature, layer, predefined_tags = {}):
+        field_dict = get_field_values (feature, self.field_names)
+        if self.translation_module:
+            return self.translation_module.get_tags(field_dict, 'relation')
+        return field_dict
     def get_common_value_fields(self, features, layer):
         layer_definition = layer.GetLayerDefn()
         result = {}
@@ -31,3 +32,19 @@ class TagMapper(object):
                         del result[field_name]
 
         return result
+
+def get_field_names(layer):
+    layer_definition = layer.GetLayerDefn()
+    result = []
+    for i in range(layer_definition.GetFieldCount()):
+        field_name =  layer_definition.GetFieldDefn(i).GetName()
+        result.append(field_name)
+    return result
+
+def get_field_values(feature, field_names):
+    result = {}
+    for field_name in field_names:
+        field_value = feature.GetField(field_name)
+        if field_value is not None:
+            result[field_name] = feature.GetField(field_name)
+    return result

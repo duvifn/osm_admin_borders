@@ -10,7 +10,7 @@ class Node(object):
         self.lon = lon
         self.lat = lat
         self.tags = tags
-        self.str_id = get_str_id(lon, lat, tags, digits_of_precision)
+        self.str_id = get_str_id(lon, lat, digits_of_precision)
         self.referrers = []
     
     def add_referrer(self, referrer):
@@ -55,8 +55,8 @@ class Node(object):
 def get_new_id():
     return global_id.get_new_id()
 
-def get_str_id(lon, lat, tags, digits_of_precision):
-    return format(lon, '.'+str(digits_of_precision)+'f') + '_' + format(lat, '.'+str(digits_of_precision)+'f') + '_' + json.dumps(tags)
+def get_str_id(lon, lat, digits_of_precision):
+    return format(lon, '.'+str(digits_of_precision)+'f') + '_' + format(lat, '.'+str(digits_of_precision)+'f')
 
 class NodeCache(object):
     def __init__(self, options):
@@ -66,7 +66,7 @@ class NodeCache(object):
     def add_from_touple(self, touple, tags):
         lon = touple[0]
         lat = touple[1]
-        str_id = get_str_id(lon, lat, tags, self.digits_of_precision)
+        str_id = get_str_id(lon, lat, self.digits_of_precision)
         if  str_id in self._cache:
             nd = self._cache[str_id]
             return self._cache[str_id]

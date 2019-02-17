@@ -8,5 +8,5 @@ def get_new_id():
 
 def set_positive():
     if GlobalId.elementIdCounter != 0:
-        raise Exception("You can change to positive only before any call to 'get_new_id()' was occured")
+        raise RuntimeError("You can change to positive only before any call to 'get_new_id()' was occured")
     GlobalId.elementIdCounterIncr = 1
