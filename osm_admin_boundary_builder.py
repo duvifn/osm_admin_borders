@@ -53,11 +53,11 @@ class OsmAdminBoundaryBuilder(object):
                     node = nodes[node_index]
                     target_ways = [ ref[0] for ref in node.referrers if (ref[0] != way and len(ref[0].referrers) > 0) ]
                     for target_way in target_ways:
-                        similar_paths = target_way.find_commom_path(way, node_index, self.minimum_common_way_node_number)
+                        similar_paths = target_way.find_commom_path(way, node_index, min(self.minimum_common_way_node_number, len(way.nodes)))
                         
                         if len(similar_paths) == 0:
                             # No match, try reverse ordered nodes for adjoined polygons
-                            similar_paths = target_way.find_commom_path(way, node_index, self.minimum_common_way_node_number, True)
+                            similar_paths = target_way.find_commom_path(way, node_index, min(self.minimum_common_way_node_number, len(way.nodes)), True)
                             if len(similar_paths) > 0:
                                 str_id = target_way.str_id
                                 target_way.reverse()
