@@ -127,7 +127,7 @@ class OsmAdminBoundaryBuilder(object):
             node_number = len(way.nodes)
             parts = node_number // way_length_limit
             for i in range(parts):
-                split_position = (i * way_length_limit - (1 if i > 0 else 0), i  + 1 * way_length_limit - 1)
+                split_position = (i * way_length_limit - (1 if i > 0 else 0), (i  + 1) * way_length_limit - 1)
                 split_positions.append(split_position)
             
             # We don't need to worry about last segment since way.split_at_positions does it for us
