@@ -9,6 +9,7 @@ def get_tags(field_dict, element_type):
         get_as_is('name_en', 'name:en', field_dict, result)
         get_as_is('id', 'source_id', field_dict, result)
         result['boundary'] = 'administrative'
+        result['type'] = 'boundary'
         result['source'] = 'osm'
     elif element_type == 'way':
         result['boundary'] = 'administrative'
