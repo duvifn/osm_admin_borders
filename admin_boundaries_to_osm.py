@@ -138,9 +138,11 @@ if aggregation_method:
                             geom.AddGeometry(polygon.Clone())
             
             result_geometry = geom.UnionCascaded()
-            relation_tags = tag_mapper.get_common_value_fields(features, layer)
+            relation_field_values = tag_mapper.get_common_value_fields(features, layer)
+            relation_tags = tag_mapper.get_relation_tags(None, layer, relation_field_values)
             relation_tags['admin_level'] = level['admin_level']
-            way_tags = relation_tags.copy()
+            way_field_values = relation_field_values.copy()
+            way_tags = tag_mapper.get_way_tags(None, layer, relation_field_values)
             way_tags['admin_level'] = level['admin_level']
             osm_builder.ogr_geometry_to_osm_admin_boundary(result_geometry, relation_tags, way_tags, {})
 

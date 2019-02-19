@@ -4,7 +4,6 @@ import node
 import way
 import relation
 import xml.etree.ElementTree as etree
-import sys
 
 class OsmAdminBoundaryBuilder(object):
     def __init__(self, options):
@@ -137,7 +136,7 @@ class OsmAdminBoundaryBuilder(object):
 
     def output_to_file(self):
         dec_string = '<?xml version="1.0"?>\n<osm version="0.6" generator="admin_boundaries_to_osm.py">\n'
-        with open(self.output_file, 'w', buffering=-1) as f:
+        with open(self.output_file, 'w', buffering=-1, encoding='utf8') as f:
             f.write(dec_string)
             
             # nodes
@@ -182,7 +181,6 @@ def split_way(way, way_split_positions, way_cache, relation_cache):
         replaces.append(new_way)
     update_referrers(relation_cache, way, replaces)
     return replaces
-    # TODO: treat tags (combine with priority to lower admin levels)
 
 def update_referrers(relation_cache, way, replaces):
     # Clone referrers because it is going to be changed while iterating

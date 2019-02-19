@@ -2,15 +2,17 @@ class TagMapper(object):
     def __init__(self, layer, translation_module = None):
         self.field_names = get_field_names(layer)
         self.translation_module = translation_module
-    def get_node_tags(self, feature, layer, predefined_tags = {}):
+    def get_node_tags(self, feature, layer, field_dict = None):
         return {}
-    def get_way_tags(self, feature, layer, predefined_tags = {}):
-        field_dict = get_field_values (feature, self.field_names)
+    def get_way_tags(self, feature, layer, field_dict = None):
+        if not field_dict:
+            field_dict = get_field_values (feature, self.field_names)
         if self.translation_module:
             return self.translation_module.get_tags(field_dict, 'way')
         return field_dict
-    def get_relation_tags(self, feature, layer, predefined_tags = {}):
-        field_dict = get_field_values (feature, self.field_names)
+    def get_relation_tags(self, feature, layer, field_dict = None):
+        if not field_dict:
+            field_dict = get_field_values (feature, self.field_names)
         if self.translation_module:
             return self.translation_module.get_tags(field_dict, 'relation')
         return field_dict
