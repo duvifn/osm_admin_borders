@@ -34,10 +34,12 @@ parser.add_option("--aggregation_method", dest="aggregation_method",
 parser.add_option("--translation_method", dest="translation_method",
                     help="Select the tag translation method. See " +
                       "the translations/translation_example for valid values.")
-parser.add_option("--minimum_common_way_node_number", dest="minimum_common_way_node_number", type=int, default=10,
-                    help="The minimum node number that ways have to share in order to create one common way")
+parser.add_option("--minimum_common_way_node_number", dest="minimum_common_way_node_number", type=int, default=2,
+                    help="The minimum node number that ways have to share in order to create one new common segment")
 parser.add_option("--way_length_limit", dest="way_length_limit", type=int, default=1800,
                     help="Maximum nodes per way")
+parser.add_option("--remove_slivers_epsilon", dest="remove_slivers_epsilon", type=float,
+                    help="Remove small polygons (slivers) that usually created in aggregation of not exactly touching poligons. Example epsilon: 0.00001")
 # Add timestamp attributes. Again, this can cause big problems so surpress the help
 parser.add_option("--add-timestamp", dest="addTimestamp", action="store_true",
                     help=optparse.SUPPRESS_HELP)
@@ -95,6 +97,7 @@ if data_source is None:
 else:
     layer = data_source.GetLayer()
 
+
 # Get desiered admin level
 deepest_admin_level = None
 if options.aggregation_method:
@@ -105,6 +108,7 @@ if options.aggregation_method:
 
 tag_mapper = tags.TagMapper(layer, translation_method)
 osm_builder = OsmAdminBoundaryBuilder(options)
+
 
 # Loop over all features and build OSM objects
 for feature in layer:
@@ -118,6 +122,8 @@ for feature in layer:
         way_tags['admin_level'] = deepest_admin_level
     
     osm_builder.ogr_geometry_to_osm_admin_boundary(ogrgeometry, relation_tags, way_tags, node_tags)
+
+
 
 # Aggregate lower levels
 if aggregation_method:
@@ -144,6 +150,10 @@ if aggregation_method:
             way_field_values = relation_field_values.copy()
             way_tags = tag_mapper.get_way_tags(None, layer, relation_field_values)
             way_tags['admin_level'] = level['admin_level']
+            if options.remove_slivers_epsilon:
+                import geometric_processing
+                result_geometry = geometric_processing.remove_slivers(result_geometry, options.remove_slivers_epsilon)
+
             osm_builder.ogr_geometry_to_osm_admin_boundary(result_geometry, relation_tags, way_tags, {})
 
 # Optimize ways
