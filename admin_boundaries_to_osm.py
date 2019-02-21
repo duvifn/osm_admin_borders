@@ -39,7 +39,7 @@ parser.add_option("--minimum_common_way_node_number", dest="minimum_common_way_n
 parser.add_option("--way_length_limit", dest="way_length_limit", type=int, default=1800,
                     help="Maximum nodes per way")
 parser.add_option("--remove_slivers_epsilon", dest="remove_slivers_epsilon", type=float,
-                    help="Remove small polygons (slivers) that usually created in aggregation of not exactly touching poligons. Example epsilon: 0.00001")
+                    help="Remove small polygons (slivers) that usually created in aggregation of not exactly touching polygons. Example epsilon: 0.00001")
 # Add timestamp attributes. Again, this can cause big problems so surpress the help
 parser.add_option("--add-timestamp", dest="addTimestamp", action="store_true",
                     help=optparse.SUPPRESS_HELP)
