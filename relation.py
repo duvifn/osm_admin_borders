@@ -11,6 +11,12 @@ class Relation(object):
         self.tags = tags
         self.str_id = get_str_id(members, tags)
     
+    def member_exists(self, element, role):
+        for member in self.members:
+            if member['ref'] == element and member['role'] == role:
+                return True
+        return False
+
     def to_xml(self, options):
         
         # Build up a dict for optional settings
@@ -54,10 +60,11 @@ class Relation(object):
                 # add the replacing members in the same position
                 for j in range(len(member_refs_to_replace_with)):
                     new_way = member_refs_to_replace_with[j]
-                    new_member = member.copy()
-                    new_member['ref'] = new_way
-                    members.insert(i + j, new_member)
-                    new_way.add_referrer(self)
+                    if not self.member_exists(new_way, 'outer'):
+                        new_member = member.copy()
+                        new_member['ref'] = new_way
+                        members.insert(i + j, new_member)
+                        new_way.add_referrer(self)
                 
                 # I can't imagine a case where a way is referrenced more than 
                 # once by the same relation, but just in case...
