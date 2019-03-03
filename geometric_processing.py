@@ -9,6 +9,7 @@ def remove_slivers(ogr_geometry, epsilon):
     wkb_buffer = ogr_geometry.ExportToWkb()
     shapely_geom = wkb.loads(wkb_buffer)
     result = shapely_geom.buffer(epsilon, 1, join_style=JOIN_STYLE.mitre).buffer(-epsilon, 1, join_style=JOIN_STYLE.mitre)
+    #result = shapely_geom.buffer(epsilon, 1).buffer(-epsilon, 1)
     result_wkb = wkb.dumps(result)
     return ogr.CreateGeometryFromWkb(result_wkb)
 

@@ -20,26 +20,25 @@ parser = optparse.OptionParser(usage=usage)
 
 parser.add_option("-o", "--output_file", dest="output_file", metavar="OUTPUT",
                     help="Set destination .osm file name and location.")
-
 parser.add_option("-p", "--digits_of_precision", dest="digits_of_precision", metavar="DIGITS_OF_PRECISION", type=int, default=5,
                     help="Set node digit precision. Used as a snapping to grid tolarence for nodes. default to 5")
-
-# Add version attributes. this can cause big problems so surpress the help
-parser.add_option("--add_version", dest="add_version", action="store_true",
-                    help=optparse.SUPPRESS_HELP)
-
 parser.add_option("--aggregation_method", dest="aggregation_method",
                     help="Select the aggragation method. See " +
                       "the aggregation_methods/level_definition_example for valid values.")
 parser.add_option("--translation_method", dest="translation_method",
                     help="Select the tag translation method. See " +
                       "the translations/translation_example for valid values.")
-parser.add_option("--minimum_common_way_node_number", dest="minimum_common_way_node_number", type=int, default=2,
-                    help="The minimum node number that ways have to share in order to create one new common segment")
 parser.add_option("--way_length_limit", dest="way_length_limit", type=int, default=1800,
                     help="Maximum nodes per way")
 parser.add_option("--remove_slivers_epsilon", dest="remove_slivers_epsilon", type=float,
-                    help="Remove small polygons (slivers) that usually created in aggregation of not exactly touching polygons. Example epsilon: 0.00001")
+                    help="Experimental. Remove small polygons (slivers) that usually created in aggregation of not exactly touching polygons. Example epsilon: 0.00001")
+
+# Add version attributes. this can cause big problems so surpress the help
+parser.add_option("--add_version", dest="add_version", action="store_true",
+                    help=optparse.SUPPRESS_HELP)
+#The minimum node number that ways have to share in order to create one new common segment
+parser.add_option("--minimum_common_way_node_number", dest="minimum_common_way_node_number", type=int, default=2,
+                    help=optparse.SUPPRESS_HELP)
 # Add timestamp attributes. Again, this can cause big problems so surpress the help
 parser.add_option("--add-timestamp", dest="addTimestamp", action="store_true",
                     help=optparse.SUPPRESS_HELP)
